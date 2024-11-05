@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "4000:4000"
+    depends_on:
+      - upload-service
+      - analysis-service
+      - auth-service
+
+  upload-service:
+    build: ./services/upload-service
+    ports:
+      - "4001:4001"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/uploads
+    depends_on:
+      - mongodb
+
+  analysis-service:
+    build: ./services/analysis-service
+    ports:
+      - "4002:4002"
+
+  auth-service:
+    build: ./services/auth-service
+    ports:
+      - "4003:4003"
+    environment:
+      - JWT_SECRET=your_jwt_secret
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
